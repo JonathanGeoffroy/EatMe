@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ ! -d "./EatMe-desktop/bin/data/" ] ; then
+	mkdir ./EatMe-desktop/bin/data/
+fi
+
+if [ ! -d "./EatMe-desktop/bin/data/" ] ; then
+	mkdir ./EatMe-android/bin/data/
+fi
+
+rm -Rf  ./EatMe-desktop/bin/data/
+rm -Rf ./EatMe-android/assets/data/
+cp -Rf ./data/* ./EatMe-desktop/bin/data/
+cp -Rf ./data/* ./EatMe-android/assets/data/
