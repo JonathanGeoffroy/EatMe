@@ -2,6 +2,7 @@ package cmm.android.eatme.view.screens;
 
 import java.util.ArrayList;
 
+import cmm.android.eatme.model.World;
 import cmm.android.eatme.view.utils.WallpaperActor;
 
 import com.badlogic.gdx.Gdx;
@@ -34,7 +35,7 @@ public class MainMenu extends StageScreen {
 	private Music music;
 	private Table menu;
 	private TextButtonStyle style;
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public ArrayList<AssetDescriptor<Object>> getAssetDescriptors() {
@@ -51,6 +52,7 @@ public class MainMenu extends StageScreen {
 	protected void onEndLoaded() {
 		music = (Music) App.getAsset(MUSIC);
 		music.play();
+		music.setLooping(true);
 
 		menu = new Table();
 		menu.setSize(Gdx.graphics.getWidth() * 2 / 3, Gdx.graphics.getHeight() * 2 / 3);
@@ -78,7 +80,7 @@ public class MainMenu extends StageScreen {
 	private void createMainMenu() {
 		float widthMenu = Gdx.graphics.getWidth() * 2 / 3;
 		float heightMenu = (Gdx.graphics.getHeight() / NB_MAIN_MENUS) * 2 / 3;
-		
+
 		// On crée les boutons 1 par 1, en ajoutant un Listener pour chaque
 		TextButton level = new TextButton("Jouer", style);
 		level.addListener(new ChangeListener() {
@@ -124,12 +126,13 @@ public class MainMenu extends StageScreen {
 	private void createLevelMenu() {
 		float widthMenu = Gdx.graphics.getWidth() * 2 / 3;
 		float heightMenu = (Gdx.graphics.getHeight() / NB_LEVEL_MENUS) * 2 / 3;
-		
+
 		// On crée les boutons 1 par 1, en ajoutant un Listener pour chaque
 		TextButton easy = new TextButton("Facile", style);
 		easy.addListener(new ChangeListener() {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
+				EatMe.setWorld(new World(World.EASY));
 				app.setScreen(EatMe.GAME);
 				haveChoosen();
 			}
@@ -137,28 +140,30 @@ public class MainMenu extends StageScreen {
 		menu.add(easy).width(widthMenu).height(heightMenu);
 		menu.row();
 
-		TextButton normal = new TextButton("Moyen", style);
-		normal.addListener(new ChangeListener() {
+		TextButton medium = new TextButton("Moyen", style);
+		medium.addListener(new ChangeListener() {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
+				EatMe.setWorld(new World(World.MEDIUM));
 				app.setScreen(EatMe.GAME);
 				haveChoosen();
 			}
 		});
-		menu.add(normal).width(widthMenu).height(heightMenu);;
+		menu.add(medium).width(widthMenu).height(heightMenu);;
 		menu.row();
 
 		TextButton hard = new TextButton("Difficile", style);
 		hard.addListener(new ChangeListener() {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
+				EatMe.setWorld(new World(World.HARD));
 				app.setScreen(EatMe.GAME);
 				haveChoosen();
 			}
 		});
 		menu.add(hard).width(widthMenu).height(heightMenu);;
 		menu.row();
-		
+
 		TextButton returnButton = new TextButton("Retour", style);
 		returnButton.addListener(new ChangeListener() {
 			@Override
@@ -174,7 +179,7 @@ public class MainMenu extends StageScreen {
 		menu.setPosition(Gdx.graphics.getWidth() / 2 - menu.getWidth() / 2, Gdx.graphics.getHeight() / 2 - menu.getHeight() / 2);
 		addTableEffects();
 	}
-	
+
 	/**
 	 * AJoute un effet sur les boutons de la table:
 	 * Chaque bouton vient par de la gauche ou de la droite
