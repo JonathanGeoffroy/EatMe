@@ -2,6 +2,7 @@ package cmm.android.eatme.view.actors;
 
 import java.util.ArrayList;
 
+import cmm.android.eatme.control.SpriteMover;
 import cmm.android.eatme.model.Ghost;
 import cmm.android.eatme.model.World;
 import cmm.android.eatme.view.screens.Game;
@@ -23,8 +24,8 @@ public class WorldActor extends Actor {
 	private ArrayList<Sprite> ghostsSprite;
 	private TextureRegion ghostRegion;
 	private Sprite treatSprite;
-	private float timer;
-	private final float timeBeforeGhostAppears;
+	private float appearsTimer, moveTimer;
+	private final float timeBeforeGhostAppears, timerBeforeGhostMove;
 
 	public WorldActor(World world) {
 		this.world = world;
@@ -39,23 +40,36 @@ public class WorldActor extends Actor {
 		ghosts = world.getGhosts();
 		ghostsSprite = new ArrayList<Sprite>();
 
-		timeBeforeGhostAppears = 0.8f / world.getLevel();
+		timeBeforeGhostAppears = 1.0f - 0.3f * world.getLevel();
+		timerBeforeGhostMove = 0.05f - 0.02f * world.getLevel();
+
+		addListener(new SpriteMover(this));
 	}
 
 	@Override
 	public void act(float delta) {
 		super.act(delta);
-		timer += delta;
-		if (timer >= timeBeforeGhostAppears) {
+
+		// On utilise le timer pour faire apparaître de nouveaux fantôme 
+		appearsTimer += delta;
+		if (appearsTimer >= timeBeforeGhostAppears) {
 			obtainGhostSprite();
-			timer = 0;
+			appearsTimer = 0;
 			assert(ghostsSprite.size() == ghosts.size());
 		}
 
-		world.moveGhosts();
-		
+		moveTimer += delta;
+		if(moveTimer >= timerBeforeGhostMove) {
+			world.moveGhosts();
+			moveTimer = 0;
+		}
+
 		float x = getX(), y = getY();
 		float width = getWidth(), height = getHeight();
+
+		Vector2 treat = world.getTreat();
+		treatSprite.setPosition(treat.x, treat.y);
+
 		Ghost ghost;
 		Sprite ghostSprite;
 		Vector2 ghostPos;
@@ -125,5 +139,29 @@ public class WorldActor extends Actor {
 		world.freeGhost(index);
 		Sprite ghostSprite = ghostsSprite.remove(index);
 		spritesPool.free(ghostSprite);
+	}
+
+	public World getWorld() {
+		return world;
+	}
+
+	public void setWorld(World world) {
+		this.world = world;
+	}
+
+	public ArrayList<Sprite> getGhostsSprite() {
+		return ghostsSprite;
+	}
+
+	public void setGhostsSprite(ArrayList<Sprite> ghostsSprite) {
+		this.ghostsSprite = ghostsSprite;
+	}
+
+	public Sprite getTreatSprite() {
+		return treatSprite;
+	}
+
+	public void setTreatSprite(Sprite treatSprite) {
+		this.treatSprite = treatSprite;
 	}
 }

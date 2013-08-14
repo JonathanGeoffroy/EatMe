@@ -8,7 +8,7 @@ import com.badlogic.gdx.utils.Pool;
 
 public class World {
 	private static final int UP = 0, LEFT = 1, DOWN = 2, RIGHT = 3;
-	public static final int EASY = 1, MEDIUM = 2, HARD = 3;
+	public static final int EASY = 0, MEDIUM = 1, HARD = 2;
 	private Pool<Ghost> ghostPool;
 	private ArrayList<Ghost> ghosts;
 	private Vector2 treat;
@@ -41,19 +41,19 @@ public class World {
 		Vector2 pos;
 		for(Ghost ghost: ghosts) {
 			pos = ghost.getPosition();
-			
+
 			if(pos.x > treat.x)
 				pos.x --;
 			else if (pos.x < treat.x)
 				pos.x ++;
-			
+
 			if(pos.y > treat.y)
 				pos.y --;
 			else if (pos.y < treat.y)
 				pos.y ++;
 		}
 	}
-	
+
 	/**
 	 * "crée" un nouveau Fantôme grâce au Pool et l'ajoute automatiquement parmi les fantôme de ce Monde
 	 * @return Le nouveau fantôme créé
