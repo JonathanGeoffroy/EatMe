@@ -69,6 +69,10 @@ public class WorldActor extends Actor {
 	}
 
 	@Override
+	/**
+	 * Appelé automatiquement à chaque fois que le Stage est rafraichi
+	 * Permet de créer de nouveau fantômes, et de déplacer ceux déjà existants
+	 */
 	public void act(float delta) {
 		super.act(delta);
 
@@ -104,6 +108,14 @@ public class WorldActor extends Actor {
 					ghostPos = ghost.getPosition();
 					ghostSprite = ghostsSprite.get(i);
 					ghostSprite.setPosition(ghostPos.x, ghostPos.y);
+
+					// On tourne le fantôme pour qu'il regarde dans la direction du bonbon
+					if(!ghostSprite.isFlipX() && ghostPos.x <= treat.x - 1) {
+						ghostSprite.flip(true, false);
+					}
+					else if(ghostSprite.isFlipX() && ghostPos.x >= treat.x + 1) {
+						ghostSprite.flip(true, false);
+					}
 				}
 				else {
 					// On libère les fantômes qui sont déjà sorti de l'écran
@@ -169,7 +181,6 @@ public class WorldActor extends Actor {
 		Sprite ghostSprite = ghostsSprite.remove(index);
 		spritesPool.free(ghostSprite);
 	}
-
 
 	/**
 	 * Supprime les fantômes et remet le bonbon au milieu
