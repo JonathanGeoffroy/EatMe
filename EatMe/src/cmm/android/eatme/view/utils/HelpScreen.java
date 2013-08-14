@@ -23,6 +23,7 @@ public abstract class HelpScreen implements Screen {
 
 	@Override
 	public void dispose() {
+		hasInit = false;
 		App.clearAssets();
 	}
 
@@ -51,15 +52,16 @@ public abstract class HelpScreen implements Screen {
 
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
-		
+		hasInit = false;
+		App.clearAssets();
 	}
 
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
-		
+		hasInit = false;
+		App.clearAssets();
 	}
+	
 	private void drawLoader() {
 		// TODO Auto-generated method stub
 		

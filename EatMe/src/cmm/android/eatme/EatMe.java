@@ -1,5 +1,7 @@
 package cmm.android.eatme;
 
+import com.badlogic.gdx.Gdx;
+
 import cmm.android.eatme.model.World;
 import cmm.android.eatme.view.screens.Game;
 import cmm.android.eatme.view.screens.MainMenu;
@@ -18,6 +20,7 @@ public class EatMe extends App {
 		screens.add(new MainMenu());
 		screens.add(new Game());
 		setScreen(MAIN_MENU);
+		Gdx.input.setCatchBackKey(true);
 	}
 	
 	public static World getWorld() {

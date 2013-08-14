@@ -101,6 +101,12 @@ public class World {
 		ghostPool.free(rmGhost);
 	}
 
+	/**
+	 * Recommence le niveau en supprimant tous les fantômes
+	 */
+	public void reset() {
+		ghosts.clear();
+	}
 	public ArrayList<Ghost> getGhosts() {
 		return ghosts;
 	}

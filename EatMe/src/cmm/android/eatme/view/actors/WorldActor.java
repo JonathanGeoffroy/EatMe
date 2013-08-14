@@ -8,6 +8,7 @@ import cmm.android.eatme.model.World;
 import cmm.android.eatme.view.screens.Game;
 import cmm.android.eatme.view.utils.App;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -21,21 +22,23 @@ import com.badlogic.gdx.utils.Pools;
 
 public class WorldActor extends Actor {
 	private World world;
+	private TextureRegion ghostRegion;
+	private SpriteMover listener;
 	private Pool<Sprite> spritesPool;
 	private ArrayList<Ghost> ghosts;
 	private ArrayList<Sprite> ghostsSprite;
-	private TextureRegion ghostRegion;
 	private Sprite treatSprite;
 	private BitmapFont font;
 	private float appearsTimer, moveTimer;
 	private final float timeBeforeGhostAppears, timerBeforeGhostMove;
 	private boolean loose;
+	private boolean playing;
 
 	public WorldActor(World world) {
 		this.world = world;
-		
+
 		font = (BitmapFont) App.getAsset(Game.FONT);
-		
+
 		Vector2 treat = world.getTreat();
 		Texture treatText = (Texture) App.getAsset(Game.TREAT);
 		treatSprite = new Sprite(treatText);
@@ -50,7 +53,7 @@ public class WorldActor extends Actor {
 		timeBeforeGhostAppears = 1.0f - 0.3f * world.getLevel();
 		timerBeforeGhostMove = 0.05f - 0.02f * world.getLevel();
 
-		addListener(new SpriteMover(this));
+		listener = new SpriteMover(this);
 	}
 
 	private boolean ghostEatTreat() {
@@ -62,17 +65,17 @@ public class WorldActor extends Actor {
 		}
 		return false;
 	}
-	
+
 	private boolean treatIsInScreen() {
 		return getX() < treatSprite.getX() && getX() + getWidth() > treatSprite.getX() + treatSprite.getWidth()
 				&& getY() < treatSprite.getY() && getY() + getHeight() > treatSprite.getY() + treatSprite.getHeight();
 	}
-	
+
 	@Override
 	public void act(float delta) {
 		super.act(delta);
 
-		if(!loose) {
+		if(playing && !loose) {
 			// On utilise le timer pour faire apparaître de nouveaux fantôme 
 			appearsTimer += delta;
 			if (appearsTimer >= timeBeforeGhostAppears) {
@@ -110,8 +113,12 @@ public class WorldActor extends Actor {
 					freeGhostSprite(i);
 				}
 			}
-			
+
 			loose = ghostEatTreat() || !treatIsInScreen();
+			if(loose) {
+				Sound looseSound = (Sound) App.getAsset(Game.LOOSE);
+				looseSound.play();
+			}
 		}
 	}
 
@@ -122,7 +129,7 @@ public class WorldActor extends Actor {
 		for(Sprite ghostSprite : ghostsSprite) {
 			ghostSprite.draw(batch);
 		}
-		
+
 		if(loose) {
 			font.draw(batch, "Vous avez Perdu !!!", getX() + getWidth() / 3, getY() + getHeight() / 2);
 		}
@@ -171,6 +178,22 @@ public class WorldActor extends Actor {
 		spritesPool.free(ghostSprite);
 	}
 
+
+	/**
+	 * Supprime les fantômes et remet le bonbon au milieu
+	 */
+	public void reset() {
+		loose = false;
+		ghostsSprite.clear();
+
+		float width = getWidth(), height = getHeight();
+		float widthByTen = width / 10, heightByTen = height / 10;
+		Vector2 treat = world.getTreat();
+		treat.x = getX() + (width - widthByTen) / 2;
+		treat.y = getY() + (height - heightByTen) / 2; 
+		treatSprite.setBounds(treat.x, treat.y, widthByTen, heightByTen);
+	}
+
 	public World getWorld() {
 		return world;
 	}
@@ -193,5 +216,19 @@ public class WorldActor extends Actor {
 
 	public void setTreatSprite(Sprite treatSprite) {
 		this.treatSprite = treatSprite;
+	}
+
+	public boolean isPlaying() {
+		return playing;
+	}
+
+	public void setPlaying(boolean playing) {
+		this.playing = playing;
+		if(playing) {
+			addListener(listener);
+		}
+		else {
+			removeListener(listener);
+		}
 	}
 }

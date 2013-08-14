@@ -26,7 +26,7 @@ import cmm.android.eatme.view.utils.App;
 import cmm.android.eatme.view.utils.StageScreen;
 
 public class MainMenu extends StageScreen {
-	private final static String WALLPAPER = EatMe.IMAGES + "mainMenu_wallpaper.jpg", BACKGROUND = EatMe.IMAGES + "mainMenu_background.png";
+	public final static String WALLPAPER = EatMe.IMAGES + "mainMenu_wallpaper.jpg", BACKGROUND = EatMe.IMAGES + "mainMenu_background.png";
 	private final static String FONT = EatMe.FONTS + "mainMenu_font.fnt";
 	private final static String MUSIC = EatMe.SOUNDS + "effect.mp3";
 	private final static String CHOOSEN_SOUND = EatMe.SOUNDS + "loose.mp3";
@@ -49,7 +49,15 @@ public class MainMenu extends StageScreen {
 	}
 
 	@Override
+	public void resume() {
+		super.resume();
+		menu.clear();
+		createMainMenu();
+	}
+	
+	@Override
 	protected void onEndLoaded() {
+		stage.clear();
 		music = (Music) App.getAsset(MUSIC);
 		music.play();
 		music.setLooping(true);
@@ -133,8 +141,8 @@ public class MainMenu extends StageScreen {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
 				EatMe.setWorld(new World(World.EASY));
-				app.setScreen(EatMe.GAME);
 				haveChoosen();
+				app.setScreen(EatMe.GAME);
 			}
 		});
 		menu.add(easy).width(widthMenu).height(heightMenu);
@@ -145,8 +153,8 @@ public class MainMenu extends StageScreen {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
 				EatMe.setWorld(new World(World.MEDIUM));
-				app.setScreen(EatMe.GAME);
 				haveChoosen();
+				app.setScreen(EatMe.GAME);
 			}
 		});
 		menu.add(medium).width(widthMenu).height(heightMenu);;
@@ -157,8 +165,8 @@ public class MainMenu extends StageScreen {
 			@Override
 			public void changed (ChangeEvent event, Actor actor) {
 				EatMe.setWorld(new World(World.HARD));
-				app.setScreen(EatMe.GAME);
 				haveChoosen();
+				app.setScreen(EatMe.GAME);
 			}
 		});
 		menu.add(hard).width(widthMenu).height(heightMenu);;
@@ -211,5 +219,4 @@ public class MainMenu extends StageScreen {
 		Sound sound = (Sound) App.getAsset(CHOOSEN_SOUND);
 		sound.play();
 	}
-
 }

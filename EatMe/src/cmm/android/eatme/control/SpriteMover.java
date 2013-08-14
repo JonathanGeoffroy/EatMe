@@ -20,7 +20,6 @@ public class SpriteMover extends ActorGestureListener {
 	@Override
 	public void fling(InputEvent event, float velocityX, float velocityY,
 			int button) {
-		System.out.println("fliyng : " + velocityX + " " + velocityY);
 		super.fling(event, velocityX, velocityY, button);
 		Sprite treatSprite = worldActor.getTreatSprite();
 		Vector2 pos;
@@ -41,8 +40,6 @@ public class SpriteMover extends ActorGestureListener {
 				}
 			}
 		}
-
-		System.out.println("flying!");
 	}
 
 	@Override
@@ -51,6 +48,5 @@ public class SpriteMover extends ActorGestureListener {
 		super.touchDown(event, x, y, pointer, button);
 		SpriteMover.this.x = x;
 		SpriteMover.this.y = y;
-		System.out.println("touchedDown / " + x + " " + y);
 	}
 }
