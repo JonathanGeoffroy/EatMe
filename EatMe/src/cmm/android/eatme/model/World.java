@@ -35,6 +35,26 @@ public class World {
 	}
 
 	/**
+	 * Déplace chaque fantôme un peu plus près de la friandise
+	 */
+	public void moveGhosts() {
+		Vector2 pos;
+		for(Ghost ghost: ghosts) {
+			pos = ghost.getPosition();
+			
+			if(pos.x > treat.x)
+				pos.x --;
+			else if (pos.x < treat.x)
+				pos.x ++;
+			
+			if(pos.y > treat.y)
+				pos.y --;
+			else if (pos.y < treat.y)
+				pos.y ++;
+		}
+	}
+	
+	/**
 	 * "crée" un nouveau Fantôme grâce au Pool et l'ajoute automatiquement parmi les fantôme de ce Monde
 	 * @return Le nouveau fantôme créé
 	 */

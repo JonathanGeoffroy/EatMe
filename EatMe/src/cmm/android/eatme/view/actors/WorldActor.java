@@ -52,6 +52,8 @@ public class WorldActor extends Actor {
 			assert(ghostsSprite.size() == ghosts.size());
 		}
 
+		world.moveGhosts();
+		
 		float x = getX(), y = getY();
 		float width = getWidth(), height = getHeight();
 		Ghost ghost;
