@@ -9,9 +9,11 @@ import cmm.android.eatme.view.screens.Game;
 import cmm.android.eatme.view.utils.App;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Pool;
@@ -24,11 +26,16 @@ public class WorldActor extends Actor {
 	private ArrayList<Sprite> ghostsSprite;
 	private TextureRegion ghostRegion;
 	private Sprite treatSprite;
+	private BitmapFont font;
 	private float appearsTimer, moveTimer;
 	private final float timeBeforeGhostAppears, timerBeforeGhostMove;
+	private boolean loose;
 
 	public WorldActor(World world) {
 		this.world = world;
+		
+		font = (BitmapFont) App.getAsset(Game.FONT);
+		
 		Vector2 treat = world.getTreat();
 		Texture treatText = (Texture) App.getAsset(Game.TREAT);
 		treatSprite = new Sprite(treatText);
@@ -46,46 +53,65 @@ public class WorldActor extends Actor {
 		addListener(new SpriteMover(this));
 	}
 
+	private boolean ghostEatTreat() {
+		Rectangle treatRect = treatSprite.getBoundingRectangle();
+		for(Sprite ghost: ghostsSprite) {
+			if(ghost.getBoundingRectangle().overlaps(treatRect)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean treatIsInScreen() {
+		return getX() < treatSprite.getX() && getX() + getWidth() > treatSprite.getX() + treatSprite.getWidth()
+				&& getY() < treatSprite.getY() && getY() + getHeight() > treatSprite.getY() + treatSprite.getHeight();
+	}
+	
 	@Override
 	public void act(float delta) {
 		super.act(delta);
 
-		// On utilise le timer pour faire apparaître de nouveaux fantôme 
-		appearsTimer += delta;
-		if (appearsTimer >= timeBeforeGhostAppears) {
-			obtainGhostSprite();
-			appearsTimer = 0;
-			assert(ghostsSprite.size() == ghosts.size());
-		}
-
-		moveTimer += delta;
-		if(moveTimer >= timerBeforeGhostMove) {
-			world.moveGhosts();
-			moveTimer = 0;
-		}
-
-		float x = getX(), y = getY();
-		float width = getWidth(), height = getHeight();
-
-		Vector2 treat = world.getTreat();
-		treatSprite.setPosition(treat.x, treat.y);
-
-		Ghost ghost;
-		Sprite ghostSprite;
-		Vector2 ghostPos;
-
-		for(int i = ghosts.size() - 1; i >= 0; i--) {
-			ghost = ghosts.get(i);
-			if(ghost.isInScreen(x, y, width, height)) {
-				// on affiche les fantômes qui restent dans l'écran au bon endroit
-				ghostPos = ghost.getPosition();
-				ghostSprite = ghostsSprite.get(i);
-				ghostSprite.setPosition(ghostPos.x, ghostPos.y);
+		if(!loose) {
+			// On utilise le timer pour faire apparaître de nouveaux fantôme 
+			appearsTimer += delta;
+			if (appearsTimer >= timeBeforeGhostAppears) {
+				obtainGhostSprite();
+				appearsTimer = 0;
+				assert(ghostsSprite.size() == ghosts.size());
 			}
-			else {
-				// On libère les fantômes qui sont déjà sorti de l'écran
-				freeGhostSprite(i);
+
+			moveTimer += delta;
+			if(moveTimer >= timerBeforeGhostMove) {
+				world.moveGhosts();
+				moveTimer = 0;
 			}
+
+			float x = getX(), y = getY();
+			float width = getWidth(), height = getHeight();
+
+			Vector2 treat = world.getTreat();
+			treatSprite.setPosition(treat.x, treat.y);
+
+			Ghost ghost;
+			Sprite ghostSprite;
+			Vector2 ghostPos;
+
+			for(int i = ghosts.size() - 1; i >= 0; i--) {
+				ghost = ghosts.get(i);
+				if(ghost.isInScreen(x, y, width, height)) {
+					// on affiche les fantômes qui restent dans l'écran au bon endroit
+					ghostPos = ghost.getPosition();
+					ghostSprite = ghostsSprite.get(i);
+					ghostSprite.setPosition(ghostPos.x, ghostPos.y);
+				}
+				else {
+					// On libère les fantômes qui sont déjà sorti de l'écran
+					freeGhostSprite(i);
+				}
+			}
+			
+			loose = ghostEatTreat() || !treatIsInScreen();
 		}
 	}
 
@@ -95,6 +121,10 @@ public class WorldActor extends Actor {
 		treatSprite.draw(batch);
 		for(Sprite ghostSprite : ghostsSprite) {
 			ghostSprite.draw(batch);
+		}
+		
+		if(loose) {
+			font.draw(batch, "Vous avez Perdu !!!", getX() + getWidth() / 3, getY() + getHeight() / 2);
 		}
 	}
 

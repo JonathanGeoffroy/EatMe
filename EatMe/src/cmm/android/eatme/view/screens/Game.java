@@ -16,7 +16,7 @@ import cmm.android.eatme.view.utils.App;
 import cmm.android.eatme.view.utils.StageScreen;
 
 public class Game extends StageScreen {
-	private final static String FONT = EatMe.FONTS + "mainMenu_font.fnt";
+	public final static String FONT = EatMe.FONTS + "mainMenu_font.fnt";
 	private final static String MUSIC = EatMe.SOUNDS + "game_music.mp3";
 	private final static String LOOSE = EatMe.SOUNDS + "loose.mp3", APPEARS = EatMe.SOUNDS + "game_appears.mp3";
 	public final static String GHOST = EatMe.IMAGES + "ghost.png", TREAT = EatMe.IMAGES + "treat.png";
