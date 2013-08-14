@@ -9,9 +9,7 @@ import cmm.android.eatme.model.World;
 import cmm.android.eatme.view.screens.Game;
 import cmm.android.eatme.view.utils.App;
 
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -30,7 +28,6 @@ public class WorldActor extends Actor {
 	private ArrayList<Ghost> ghosts;
 	private ArrayList<Sprite> ghostsSprite;
 	private Sprite treatSprite;
-	private BitmapFont font;
 	private float appearsTimer, moveTimer;
 	private final float timeBeforeGhostAppears, timerBeforeGhostMove;
 	private boolean playing;
@@ -38,8 +35,6 @@ public class WorldActor extends Actor {
 	public WorldActor(Game game) {
 		this.game = game;
 		this.world = EatMe.getWorld();
-
-		font = (BitmapFont) App.getAsset(Game.FONT);
 
 		Vector2 treat = world.getTreat();
 		Texture treatText = (Texture) App.getAsset(Game.TREAT);
