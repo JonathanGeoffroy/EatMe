@@ -2,6 +2,7 @@ package cmm.android.eatme.view.actors;
 
 import java.util.ArrayList;
 
+import cmm.android.eatme.EatMe;
 import cmm.android.eatme.control.SpriteMover;
 import cmm.android.eatme.model.Ghost;
 import cmm.android.eatme.model.World;
@@ -21,6 +22,7 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
 
 public class WorldActor extends Actor {
+	private Game game;
 	private World world;
 	private TextureRegion ghostRegion;
 	private SpriteMover listener;
@@ -31,11 +33,11 @@ public class WorldActor extends Actor {
 	private BitmapFont font;
 	private float appearsTimer, moveTimer;
 	private final float timeBeforeGhostAppears, timerBeforeGhostMove;
-	private boolean loose;
 	private boolean playing;
 
-	public WorldActor(World world) {
-		this.world = world;
+	public WorldActor(Game game) {
+		this.game = game;
+		this.world = EatMe.getWorld();
 
 		font = (BitmapFont) App.getAsset(Game.FONT);
 
@@ -75,7 +77,7 @@ public class WorldActor extends Actor {
 	public void act(float delta) {
 		super.act(delta);
 
-		if(playing && !loose) {
+		if(playing && !world.isLoose()) {
 			// On utilise le timer pour faire apparaître de nouveaux fantôme 
 			appearsTimer += delta;
 			if (appearsTimer >= timeBeforeGhostAppears) {
@@ -114,10 +116,9 @@ public class WorldActor extends Actor {
 				}
 			}
 
-			loose = ghostEatTreat() || !treatIsInScreen();
+			boolean loose = ghostEatTreat() || !treatIsInScreen();
 			if(loose) {
-				Sound looseSound = (Sound) App.getAsset(Game.LOOSE);
-				looseSound.play();
+				game.loose();
 			}
 		}
 	}
@@ -128,10 +129,6 @@ public class WorldActor extends Actor {
 		treatSprite.draw(batch);
 		for(Sprite ghostSprite : ghostsSprite) {
 			ghostSprite.draw(batch);
-		}
-
-		if(loose) {
-			font.draw(batch, "Vous avez Perdu !!!", getX() + getWidth() / 3, getY() + getHeight() / 2);
 		}
 	}
 
@@ -183,7 +180,6 @@ public class WorldActor extends Actor {
 	 * Supprime les fantômes et remet le bonbon au milieu
 	 */
 	public void reset() {
-		loose = false;
 		ghostsSprite.clear();
 
 		float width = getWidth(), height = getHeight();

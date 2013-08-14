@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 import cmm.android.eatme.EatMe;
 import cmm.android.eatme.model.World;
+import cmm.android.eatme.view.actors.LooseActor;
 import cmm.android.eatme.view.actors.PauseActor;
 import cmm.android.eatme.view.actors.WorldActor;
 import cmm.android.eatme.view.utils.App;
@@ -26,6 +27,7 @@ public class Game extends StageScreen {
 	private World world;
 	private WorldActor worldActor;
 	private PauseActor pauseActor;
+	private LooseActor looseActor;
 	private Music music;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -46,15 +48,21 @@ public class Game extends StageScreen {
 	protected void onEndLoaded() {
 		stage.clear();
 		world = EatMe.getWorld();
-		worldActor = new WorldActor(world);
+		worldActor = new WorldActor(this);
 		worldActor.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 		pauseActor = new PauseActor(this);
 		pauseActor.setVisible(false);
 		pauseActor.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		
+		looseActor = new LooseActor(this);
+		looseActor.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		looseActor.setVisible(false);
+		
 		stage.addActor(worldActor);
 		stage.addActor(pauseActor);
-
+		stage.addActor(looseActor);
+		
 		music = (Music) App.getAsset(MUSIC);
 		music.play();
 		music.setLooping(true);
@@ -73,8 +81,9 @@ public class Game extends StageScreen {
 	/**
 	 * Cache le menu pause et relance le jeu
 	 */
-	public void disablePauseActor() {
+	public void disableMenus() {
 		pauseActor.setVisible(false);
+		looseActor.setVisible(false);
 		worldActor.setPlaying(true);
 
 	}
@@ -84,7 +93,7 @@ public class Game extends StageScreen {
 	 */
 	public void switchPauseActor() {
 		if(pauseActor.isVisible()) {
-			disablePauseActor();
+			disableMenus();
 		}
 		else {
 			enablePauseActor();
@@ -94,12 +103,12 @@ public class Game extends StageScreen {
 	public void reset() {
 		worldActor.reset();
 		world.reset();
-		disablePauseActor();
+		disableMenus();
 	}
 
 	@Override
 	public void draw(float delta) {
-		if(Gdx.input.isKeyPressed(Keys.BACK) || Gdx.input.isKeyPressed(Keys.ESCAPE)) {
+		if(!looseActor.isVisible() && Gdx.input.isKeyPressed(Keys.BACK) || Gdx.input.isKeyPressed(Keys.ESCAPE)) {
 			enablePauseActor();
 		}
 		super.draw(delta);
@@ -109,5 +118,12 @@ public class Game extends StageScreen {
 	public void hide() {
 		super.hide();
 		music.stop();
+	}
+
+	public void loose() {
+		world.setLoose(true);
+		Sound looseSound = (Sound) App.getAsset(Game.LOOSE);
+		looseSound.play();
+		looseActor.setVisible(true);
 	}
 }

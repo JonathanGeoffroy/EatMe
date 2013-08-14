@@ -13,7 +13,8 @@ public class World {
 	private ArrayList<Ghost> ghosts;
 	private Vector2 treat;
 	private int level;
-
+	private boolean loose;
+	
 	public World(int level) {
 		this.level = level;
 
@@ -105,6 +106,7 @@ public class World {
 	 * Recommence le niveau en supprimant tous les fantômes
 	 */
 	public void reset() {
+		loose = false;
 		ghosts.clear();
 	}
 	public ArrayList<Ghost> getGhosts() {
@@ -117,5 +119,13 @@ public class World {
 
 	public Vector2 getTreat() {
 		return treat;
+	}
+
+	public boolean isLoose() {
+		return loose;
+	}
+
+	public void setLoose(boolean loose) {
+		this.loose = loose;
 	}
 }
