@@ -44,7 +44,6 @@ public class Game extends StageScreen {
 
 	@Override
 	protected void onEndLoaded() {
-		System.out.println("game loaded");
 		stage.clear();
 		world = EatMe.getWorld();
 		worldActor = new WorldActor(world);

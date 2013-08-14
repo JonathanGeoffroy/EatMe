@@ -30,7 +30,6 @@ public class App extends Game {
 
 	public static void clearAssets() {
 		manager.clear();
-		System.out.println("cleared: " + manager.getLoadedAssets());
 	}
 
 	public static boolean hasLoaded() {
