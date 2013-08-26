@@ -54,19 +54,19 @@ public class Game extends StageScreen {
 		pauseActor = new PauseActor(this);
 		pauseActor.setVisible(false);
 		pauseActor.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		
+
 		looseActor = new LooseActor(this);
 		looseActor.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		looseActor.setVisible(false);
-		
+
 		stage.addActor(worldActor);
 		stage.addActor(pauseActor);
 		stage.addActor(looseActor);
-		
+
 		music = (Music) App.getAsset(MUSIC);
 		music.play();
 		music.setLooping(true);
-		
+
 		worldActor.setPlaying(true);
 	}
 
@@ -112,12 +112,6 @@ public class Game extends StageScreen {
 			enablePauseActor();
 		}
 		super.draw(delta);
-	}
-
-	@Override
-	public void hide() {
-		super.hide();
-		music.stop();
 	}
 
 	public void loose() {

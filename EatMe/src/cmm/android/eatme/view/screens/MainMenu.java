@@ -49,11 +49,17 @@ public class MainMenu extends StageScreen {
 	}
 
 	@Override
-	public void resume() {
-		super.resume();
-		menu.clear();
-		createMainMenu();
+	public void show() {
+		super.show();
+		menu = new Table();
 	}
+	
+//	@Override
+//	public void resume() {
+//		super.resume();
+//		menu.clear();
+//		createMainMenu();
+//	}
 	
 	@Override
 	protected void onEndLoaded() {
